@@ -29,21 +29,30 @@ jobs:
         docker push $IMAGE_NAME:$TAG
 
   deploy-dev:
-      needs: build-and-push
-      runs-on: ubuntu-latest
-      if: github.ref == 'refs/heads/dev'
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev'
 
-      steps:
-      - name: Deploy dev en servidor Ionos vía SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:dev
-            docker stop rsa_dev || true && docker rm rsa_dev || true
-            docker run -d --name rsa_dev --restart always -p 8083:5000 ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:dev
+    steps:
+    - name: Deploy dev en servidor Ionos vía SSH
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          docker pull ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:dev
+          docker stop rsa_dev || true && docker rm rsa_dev || true
+          docker run -d --name rsa_dev --restart always -p 8083:5000 \
+            -v /opt/secure_certs:/opt/secure_certs \
+            ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:dev
+            - name: Mostrar nombre de rama/tag
+    - name: Mostrar nombre de rama/tag
+      run: |
+        echo "Rama actual: ${{ github.ref }}"
+        TAG=$(echo "${{ github.ref }}" | sed 's|refs/heads/||')
+        echo "Usando TAG: $TAG"
+
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
@@ -59,7 +68,9 @@ jobs:
         script: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:master
           docker stop rsa_prod || true && docker rm rsa_prod || true
-          docker run -d --name rsa_prod --restart always -p 8082:5000 ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:master
+          docker run -d --name rsa_prod --restart always -p 8082:5000 \
+            -v /opt/secure_certs:/opt/secure_certs \
+            ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:master
     - name: Mostrar nombre de rama/tag
       run: |
         echo "Rama actual: ${{ github.ref }}"
