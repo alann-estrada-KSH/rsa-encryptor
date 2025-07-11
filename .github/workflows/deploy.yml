@@ -43,7 +43,7 @@ jobs:
           script: |
             docker pull ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:dev
             docker stop rsa_dev || true && docker rm rsa_dev || true
-            docker run -d --name rsa_dev --restart always -p 5001:5000 ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:dev
+            docker run -d --name rsa_dev --restart always -p 8083:5000 ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:dev
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
@@ -59,7 +59,7 @@ jobs:
         script: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:master
           docker stop rsa_prod || true && docker rm rsa_prod || true
-          docker run -d --name rsa_prod --restart always -p 80:5000 ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:master
+          docker run -d --name rsa_prod --restart always -p 8082:5000 ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:master
     - name: Mostrar nombre de rama/tag
       run: |
         echo "Rama actual: ${{ github.ref }}"

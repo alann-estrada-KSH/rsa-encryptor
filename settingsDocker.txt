@@ -32,3 +32,32 @@ sudo ufw allow 3306/tcp  # MySQL
 sudo ufw allow from 127.0.0.1 to any port 5432  # PostgreSQL local
 sudo ufw allow from 127.0.0.1 to any port 3306  # MySQL local
 sudo ufw enable
+
+# Copy your archive .pen in /opt/secure_certs/banorte.pem
+
+# Install ngix
+sudo apt install nginx -y
+
+# Recomendación para el server: 
+1. Apagar apache2 
+sudo systemctl status apache2
+sudo systemctl stop apache2
+sudo systemctl disable apache2
+
+2. Renombrar el archivo plesk para que no lo lea:
+sudo mv /etc/nginx/plesk.conf.d/server.conf /etc/nginx/plesk.conf.d/server.conf.disabled
+
+3. Comentarlo de sudo nano /etc/nginx/conf.d/zz010_psa_nginx.conf:
+# include /etc/nginx/plesk.conf.d/server.conf;
+
+4. Eliminar el archivo por defecto:
+sudo rm /etc/nginx/sites-enabled/default
+
+# Si requiere agregar mas rutas, en el archivo /etc/nginx/sites-available/rsa puede agregarlas por ejemplo:
+# En este caso lo estamos intentando con nux pero usted puede poner el nombre que requiera
+location /nuxt/ {
+    rewrite ^/nuxt/(.*)$ /$1 break;
+    proxy_pass http://127.0.0.1:8085/;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+}
