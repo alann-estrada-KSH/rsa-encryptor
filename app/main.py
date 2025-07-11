@@ -2,10 +2,19 @@ from flask import Flask, request, jsonify
 from base64 import b64encode
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
+from flask import send_from_directory
 import os
 import traceback
 
 app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return send_from_directory('static_site', 'index.html')
+
+@app.route('/health', methods=['GET'])
+def health():
+    return jsonify({"status": "OK"})
 
 @app.route('/encrypt', methods=['POST'])
 def encrypt():
@@ -65,10 +74,6 @@ def encrypt():
             "error": str(e),
             "success": False
         }), 500
-
-@app.route('/health', methods=['GET'])
-def health():
-    return jsonify({"status": "OK"})
 
 if __name__ == '__main__':
     print("Iniciando servidor Python para cifrado RSA Banorte...")

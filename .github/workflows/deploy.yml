@@ -43,7 +43,7 @@ jobs:
         script: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:master
           docker stop rsa_prod || true && docker rm rsa_prod || true
-          docker run -d --name rsa_prod -p 80:5000 ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:master
+          docker run -d --name rsa_prod --restart always -p 80:5000 ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:master
     - name: Mostrar nombre de rama/tag
       run: |
         echo "Rama actual: ${{ github.ref }}"
