@@ -24,7 +24,8 @@ docker compose version
 # Server conf ports
 sudo ufw allow 22/tcp    # SSH
 sudo ufw allow 80/tcp    # HTTP (producción Flask)
-sudo ufw allow 5000/tcp  # Flask desarrollo (opcional)
+sudo ufw allow 5000/tcp  # Flask prod (opcional)
+sudo ufw allow 5001/tcp  # Flask dev
 sudo ufw allow 8000/tcp  # Laravel
 sudo ufw allow 5432/tcp  # PostgreSQL
 sudo ufw allow 3306/tcp  # MySQL

@@ -28,6 +28,22 @@ jobs:
         docker build -f $DOCKERFILE -t $IMAGE_NAME:$TAG .
         docker push $IMAGE_NAME:$TAG
 
+  deploy-dev:
+      needs: build-and-push
+      runs-on: ubuntu-latest
+      if: github.ref == 'refs/heads/dev'
+
+      steps:
+      - name: Deploy dev en servidor Ionos vía SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:dev
+            docker stop rsa_dev || true && docker rm rsa_dev || true
+            docker run -d --name rsa_dev --restart always -p 5001:5000 ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:dev
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
