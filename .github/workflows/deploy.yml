@@ -43,10 +43,7 @@ jobs:
         script: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:dev
           docker stop rsa_dev || true && docker rm rsa_dev || true
-          docker run -d --name rsa_dev --restart always -p 8083:5000 \
-            -v /opt/secure_certs:/opt/secure_certs \
-            ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:dev
-            - name: Mostrar nombre de rama/tag
+          docker run -d --name rsa_dev --restart always -p 8083:5000 -v /opt/secure_certs:/opt/secure_certs ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:dev
     - name: Mostrar nombre de rama/tag
       run: |
         echo "Rama actual: ${{ github.ref }}"
@@ -68,9 +65,7 @@ jobs:
         script: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:master
           docker stop rsa_prod || true && docker rm rsa_prod || true
-          docker run -d --name rsa_prod --restart always -p 8082:5000 \
-            -v /opt/secure_certs:/opt/secure_certs \
-            ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:master
+          docker run -d --name rsa_prod --restart always -p 8082:5000 -v /opt/secure_certs:/opt/secure_certs ${{ secrets.DOCKER_USERNAME }}/rsa-encryptor:master
     - name: Mostrar nombre de rama/tag
       run: |
         echo "Rama actual: ${{ github.ref }}"
