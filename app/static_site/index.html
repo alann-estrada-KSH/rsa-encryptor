@@ -173,8 +173,8 @@
                 </div>
                 <div class="flex items-center space-x-4">
                     <div class="text-right">
-                        <p class="text-gray-300 text-sm">{{ new Date().toLocaleDateString('es-ES') }}</p>
-                        <p class="text-gray-400 text-xs">{{ new Date().toLocaleTimeString('es-ES') }}</p>
+                        <p class="text-gray-300 text-sm">{{ formatDate(currentTime) }}</p>
+                        <p class="text-gray-400 text-xs">{{ formatTime(currentTime) }}</p>
                     </div>
                 </div>
             </div>
@@ -330,7 +330,7 @@
                     Sistema de monitoreo RSA - Versión 1.0
                 </p>
                 <p class="text-gray-500 text-xs">
-                    Última actualización: {{ new Date().toLocaleString('es-ES') }}
+                    Última actualización: {{ formatDate(currentTime) }} {{ formatTime(currentTime) }}
                 </p>
             </div>
         </footer>
@@ -373,6 +373,18 @@
                 },
                 updateTime() {
                     this.currentTime = new Date()
+                },
+                formatDate(date) {
+                    const day = String(date.getDate()).padStart(2, '0')
+                    const month = String(date.getMonth() + 1).padStart(2, '0')
+                    const year = date.getFullYear()
+                    return `${day}/${month}/${year}`
+                },
+                formatTime(date) {
+                    const hours = String(date.getHours()).padStart(2, '0')
+                    const minutes = String(date.getMinutes()).padStart(2, '0')
+                    const seconds = String(date.getSeconds()).padStart(2, '0')
+                    return `${hours}:${minutes}:${seconds}`
                 }
             },
             mounted() {

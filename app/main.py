@@ -7,6 +7,8 @@ import os
 import traceback
 
 app = Flask(__name__)
+CERT_FILE_PATH = "/opt/secure_certs/banorte.pem"
+SECURE_TOKEN = "dZxGyHfKwoDxX0BWI9nMHPQ9kz9uxWBVYxBMgEdqHRE=" # Token for secure access
 
 @app.route('/')
 def index():
@@ -15,6 +17,19 @@ def index():
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({"status": "OK"})
+
+@app.route('/certificate', methods=['GET'])
+def get_certificate():
+    if request.args.get('token') != SECURE_TOKEN:
+        return jsonify({"error": "Unauthorized"}), 401
+    
+    if not os.path.exists(CERT_FILE_PATH):
+        return jsonify({"error": "Certificate file not found"}), 404
+    
+    with open(CERT_FILE_PATH, 'rb') as cert_file:
+        cert_content = cert_file.read()
+    
+    return jsonify({"certificate": cert_content.decode('utf-8')}), 200
 
 @app.route('/encrypt', methods=['POST'])
 def encrypt():
