@@ -1,0 +1,33 @@
+# Execute update and upgrade
+sudo apt update && sudo apt upgrade -y
+
+# Install docker 
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+
+# check docker version
+docker --version
+
+# use docker variable
+sudo usermod -aG docker $USER
+
+# Activate Docker
+sudo systemctl enable docker
+sudo systemctl start docker
+
+# Install plugin
+sudo apt install docker-compose-plugin -y
+
+# Verify Version
+docker compose version
+
+# Server conf ports
+sudo ufw allow 22/tcp    # SSH
+sudo ufw allow 80/tcp    # HTTP (producción Flask)
+sudo ufw allow 5000/tcp  # Flask desarrollo (opcional)
+sudo ufw allow 8000/tcp  # Laravel
+sudo ufw allow 5432/tcp  # PostgreSQL
+sudo ufw allow 3306/tcp  # MySQL
+sudo ufw allow from 127.0.0.1 to any port 5432  # PostgreSQL local
+sudo ufw allow from 127.0.0.1 to any port 3306  # MySQL local
+sudo ufw enable
